@@ -9,7 +9,7 @@ require (
 	github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3 v3.0.1
 	github.com/netcracker/qubership-core-lib-go/v3 v3.0.1
 	github.com/opensearch-project/opensearch-go/v4 v4.3.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go v0.35.0
 )
 
