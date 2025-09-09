@@ -44,7 +44,7 @@ To get `opensearch dbaas client` use
  go get github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client@<latest released version>
 ```
 
-List of all released versions may be found [here](https://github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/-/tags)
+List of all released versions may be found [here](https://github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/tags)
 
 ## Usage
 
