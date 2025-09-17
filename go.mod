@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.5
 
 require (
-	github.com/docker/go-connections v0.5.0
+	github.com/docker/go-connections v0.6.0
 	github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3 v3.0.2
 	github.com/netcracker/qubership-core-lib-go/v3 v3.1.0
 	github.com/opensearch-project/opensearch-go/v4 v4.3.0
