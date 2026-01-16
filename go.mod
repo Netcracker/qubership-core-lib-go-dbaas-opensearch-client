@@ -1,6 +1,6 @@
 module github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5
 
-go 1.25.5
+go 1.25.6
 
 require (
 	github.com/docker/go-connections v0.6.0
