@@ -12,7 +12,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/go-connections/nat"
 	"github.com/netcracker/qubership-core-lib-go/v3/configloader"
 	"github.com/netcracker/qubership-core-lib-go/v3/serviceloader"
 	"github.com/netcracker/qubership-core-lib-go/v3/security"
@@ -78,7 +77,7 @@ func (suite *OsAPITestSuite) SetupSuite() {
 
 	suite.ctx = context.Background()
 	commonIdentifier := "os-test-container-network"
-	var port nat.Port
+	var port string
 	port, suite.osContainer = prepareTestContainer(suite.T(), suite.ctx, commonIdentifier)
 
 	dbaasPool := dbaasbase.NewDbaaSPool()
@@ -1467,7 +1466,7 @@ func osDbaasResponseHandler(address string) []byte {
 	return jsonResponse
 }
 
-func prepareTestContainer(t *testing.T, ctx context.Context, identifier string) (nat.Port, testcontainers.Container) {
+func prepareTestContainer(t *testing.T, ctx context.Context, identifier string) (string, testcontainers.Container) {
 	os.Setenv("TESTCONTAINERS_RYUK_DISABLED", "true")
 
 	env := map[string]string{
@@ -1475,10 +1474,10 @@ func prepareTestContainer(t *testing.T, ctx context.Context, identifier string) 
 		"DISABLE_INSTALL_DEMO_CONFIG": "true",
 		"discovery.type":              "single-node",
 	}
-	port, _ := nat.NewPort("tcp", opensearchPort)
+	port := opensearchPort
 	req := testcontainers.ContainerRequest{
 		Image:        opensearchImage,
-		ExposedPorts: []string{port.Port()},
+		ExposedPorts: []string{port},
 		Env:          env,
 		WaitingFor:     wait.ForHTTP("/").WithPort(port).WithStartupTimeout(120 * time.Second),
 		
