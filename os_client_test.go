@@ -13,7 +13,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/go-connections/nat"
 	"github.com/netcracker/qubership-core-lib-go/v3/context-propagation/baseproviders/tenant"
 	dbaasbase "github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3"
 	"github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3/cache"
@@ -211,7 +210,7 @@ func osDbaasResponseHandler(address string, password string) []byte {
 	return jsonResponse
 }
 
-func prepareTestContainer(t *testing.T, ctx context.Context, identifier string) (nat.Port, testcontainers.Container) {
+func prepareTestContainer(t *testing.T, ctx context.Context, identifier string) (string, testcontainers.Container) {
 	os.Setenv("TESTCONTAINERS_RYUK_DISABLED", "true")
 
 	env := map[string]string{
@@ -227,10 +226,10 @@ func prepareTestContainer(t *testing.T, ctx context.Context, identifier string) 
 	absPathTransportKey, err := filepath.Abs("./testdata/transport-key.pem")
 	absPathTransportRoot, err := filepath.Abs("./testdata/transport-root-ca.pem")
 	absPathCustomOs, err := filepath.Abs("./testdata/custom-opensearch.yml")
-	port, _ := nat.NewPort("tcp", opensearchPort)
+	port := opensearchPort
 	req := testcontainers.ContainerRequest{
 		Image:        opensearchImage,
-		ExposedPorts: []string{port.Port()},
+		ExposedPorts: []string{port},
 		Env:          env,
 		Mounts: testcontainers.Mounts(
 			testcontainers.BindMount(absPathAdmin, "/usr/share/opensearch/config/admin.pem"),
