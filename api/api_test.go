@@ -12,15 +12,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/netcracker/qubership-core-lib-go/v3/configloader"
-	"github.com/netcracker/qubership-core-lib-go/v3/serviceloader"
-	"github.com/netcracker/qubership-core-lib-go/v3/security"
 	dbaasbase "github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3"
 	. "github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3/model"
 	. "github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3/testutils"
 	osdbaas "github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5"
 	"github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5/api/testdata"
 	"github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5/model"
+	"github.com/netcracker/qubership-core-lib-go/v3/configloader"
+	"github.com/netcracker/qubership-core-lib-go/v3/security"
+	"github.com/netcracker/qubership-core-lib-go/v3/serviceloader"
 	"github.com/opensearch-project/opensearch-go/v4/opensearchapi"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -34,16 +34,16 @@ const (
 )
 
 const (
-	dbaasAgentUrlEnvName     = "dbaas.agent"
-	namespaceEnvName         = "microservice.namespace"
-	testServiceName          = "service_test"
-	propMicroserviceName     = "microservice.name"
-	createDatabaseV3         = "/api/v3/dbaas/test_namespace/databases"
-	testToken                = "test-token"
-	testTokenExpiresIn       = 300
-	testPrefix               = "test"
-	testDelimiter            = "_"
-	index                    = "_index"
+	dbaasAgentUrlEnvName = "dbaas.agent"
+	namespaceEnvName     = "microservice.namespace"
+	testServiceName      = "service_test"
+	propMicroserviceName = "microservice.name"
+	createDatabaseV3     = "/api/v3/dbaas/test_namespace/databases"
+	testToken            = "test-token"
+	testTokenExpiresIn   = 300
+	testPrefix           = "test"
+	testDelimiter        = "_"
+	index                = "_index"
 )
 
 const (
@@ -1479,8 +1479,10 @@ func prepareTestContainer(t *testing.T, ctx context.Context, identifier string) 
 		Image:        opensearchImage,
 		ExposedPorts: []string{port},
 		Env:          env,
-		WaitingFor:     wait.ForHTTP("/").WithPort(port).WithStartupTimeout(120 * time.Second),
-		
+		WaitingFor: wait.ForHTTP("/_cluster/health?wait_for_status=yellow&timeout=60s").
+			WithPort(port).
+			WithStartupTimeout(120 * time.Second).
+			WithStatusCodeMatcher(func(status int) bool { return status == 200 }),
 	}
 	osContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
