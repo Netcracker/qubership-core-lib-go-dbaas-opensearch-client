@@ -3,8 +3,8 @@ module github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5
 go 1.26.4
 
 require (
-	github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3 v3.5.3
-	github.com/netcracker/qubership-core-lib-go/v3 v3.12.0
+	github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3 v3.5.4
+	github.com/netcracker/qubership-core-lib-go/v3 v3.13.0
 	github.com/opensearch-project/opensearch-go/v4 v4.6.0
 	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go v0.42.0
