@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/netcracker/qubership-core-lib-go/v3/utils"
 	dbaasbase "github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3"
 	"github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3/cache"
 	"github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3/model/rest"
 	"github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5/model"
+	"github.com/netcracker/qubership-core-lib-go/v3/utils"
 	"github.com/opensearch-project/opensearch-go/v4"
 	"github.com/opensearch-project/opensearch-go/v4/opensearchapi"
 )
@@ -111,7 +111,7 @@ func (o *osClientImpl) getNewPassword(ctx context.Context, classifier map[string
 	return "", errors.New("connection string doesn't contain password field")
 }
 
-func (o *osClientImpl) isPasswordValid(client *osCache) (bool, error) {
+func (o *osClientImpl) isPasswordValid(ctx context.Context, client *osCache) (bool, error) {
 	prefix := client.connectionProperties["resourcePrefix"].(string)
 	indexName := prefix + "_os_index"
 	existsReq := opensearchapi.DocumentExistsReq{
@@ -119,7 +119,7 @@ func (o *osClientImpl) isPasswordValid(client *osCache) (bool, error) {
 		DocumentID: "0",
 	}
 	resp, err := client.client.Document.Exists(
-		context.Background(),
+		ctx,
 		existsReq,
 	)
 	if resp != nil {

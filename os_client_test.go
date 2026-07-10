@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/netcracker/qubership-core-lib-go/v3/context-propagation/baseproviders/tenant"
 	dbaasbase "github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3"
 	"github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3/cache"
 	basemodel "github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3/model"
@@ -21,9 +21,11 @@ import (
 	. "github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3/testutils"
 	"github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5/api/testdata"
 	. "github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5/model"
+	"github.com/netcracker/qubership-core-lib-go/v3/context-propagation/baseproviders/tenant"
 	"github.com/opensearch-project/opensearch-go/v4"
 	"github.com/opensearch-project/opensearch-go/v4/opensearchapi"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
@@ -323,4 +325,50 @@ func (suite *DatabaseTestSuite) createSampleDocument() *strings.Reader {
         "director": "Bennett Miller",
         "year": 2011
     }`)
+}
+
+// TestGetClient_RespectsContextCancellation verifies that GetClient returns when
+// the caller's context is cancelled, proving that the context is propagated all the
+// way through the public API down to the blocking HTTP request inside isPasswordValid.
+func (suite *DatabaseTestSuite) TestGetClient_RespectsContextCancellation() {
+	done := make(chan struct{})
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		<-done
+	}))
+	defer server.Close()
+	defer close(done)
+
+	cfg := opensearch.Config{Addresses: []string{server.URL}}
+	osapiClient, err := opensearchapi.NewClient(opensearchapi.Config{Client: cfg})
+	require.NoError(suite.T(), err)
+
+	cached := &osCache{
+		client:               osapiClient,
+		connectionProperties: map[string]interface{}{"resourcePrefix": "test"},
+	}
+
+	staticClassifier := map[string]interface{}{"scope": "service"}
+	classifierFn := func(ctx context.Context) map[string]interface{} { return staticClassifier }
+	key := cache.NewKey(DB_TYPE, classifierFn(context.Background()))
+
+	impl := &OpensearchClientImpl{
+		osClientImpl: &osClientImpl{
+			opensearchCache: &cache.DbaaSCache{
+				LogicalDbCache: map[cache.Key]interface{}{key: cached},
+			},
+			params:   DbParams{Classifier: classifierFn},
+			osConfig: &opensearch.Config{},
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+
+	resultCh := make(chan error, 1)
+	go func() { _, err := impl.GetClient(ctx); resultCh <- err }()
+	select {
+	case <-resultCh:
+	case <-time.After(2 * time.Second):
+		suite.T().Fatal("Context timeout is not taken into account by GetClient")
+	}
 }
