@@ -29,7 +29,7 @@ func (this *OpensearchClientImpl) GetClient(ctx context.Context) (*opensearchapi
 		return nil, err
 	}
 	osClient := conn.(*osCache)
-	if valid, err := clientImpl.isPasswordValid(osClient); !valid && err == nil {
+	if valid, err := clientImpl.isPasswordValid(ctx, osClient); !valid && err == nil {
 		logger.Info("authentication error, try to get new password")
 		password, err := clientImpl.getNewPassword(ctx, classifier, params)
 		if err != nil {
