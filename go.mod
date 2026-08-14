@@ -1,6 +1,6 @@
 module github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5
 
-go 1.26.5
+go 1.26.6
 
 require (
 	github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3 v3.7.0
