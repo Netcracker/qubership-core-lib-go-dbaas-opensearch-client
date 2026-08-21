@@ -887,7 +887,7 @@ func (suite *OsAPITestSuite) Test_IndexTemplate() {
 	assert.NotNil(suite.T(), existsResponse)
 	assert.Equal(suite.T(), statusOk, existsResponse.StatusCode)
 
-	getReq := opensearchapi.IndexTemplateGetReq{IndexTemplates: []string{normalizeTemplateName}}
+	getReq := opensearchapi.IndexTemplateGetReq{IndexTemplates: normalizeTemplateName}
 	getResponse, err := client.IndexTemplate.Get(suite.ctx, &getReq)
 	assert.Nil(suite.T(), err)
 	assert.NotNil(suite.T(), getResponse)
@@ -919,8 +919,7 @@ func (suite *OsAPITestSuite) Test_IndexRefresh() {
 	suite.createTestIndex(indexName, osClient)
 
 	client, _ := osClient.GetClient(suite.ctx)
-	refreshReq := opensearchapi.IndicesRefreshReq{Indices: []string{indexName}}
-	refreshResponse, err := client.Indices.Refresh(suite.ctx, &refreshReq)
+	refreshResponse, err := client.Indices.Refresh(suite.ctx, client.Indices.Refresh.WithIndex(indexName))
 	assert.Nil(suite.T(), err)
 	assert.NotNil(suite.T(), refreshResponse)
 	assert.Equal(suite.T(), statusOk, refreshResponse.Inspect().Response.StatusCode)
@@ -934,8 +933,7 @@ func (suite *OsAPITestSuite) Test_IndexClearCache() {
 	suite.createTestIndex(indexName, osClient)
 
 	client, _ := osClient.GetClient(suite.ctx)
-	clearCacheReq := opensearchapi.IndicesClearCacheReq{Indices: []string{indexName}}
-	clearCacheResponse, err := client.Indices.ClearCache(suite.ctx, &clearCacheReq)
+	clearCacheResponse, err := client.Indices.ClearCache(suite.ctx, client.Indices.ClearCache.WithIndex(indexName))
 	assert.Nil(suite.T(), err)
 	assert.NotNil(suite.T(), clearCacheResponse)
 	assert.Equal(suite.T(), statusOk, clearCacheResponse.Inspect().Response.StatusCode)
