@@ -5,7 +5,7 @@ go 1.26.5
 require (
 	github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3 v3.7.2
 	github.com/netcracker/qubership-core-lib-go/v3 v3.14.1
-	github.com/opensearch-project/opensearch-go/v4 v4.6.0
+	github.com/opensearch-project/opensearch-go/v5 v5.0.0
 	github.com/stretchr/testify v1.12.1
 	github.com/testcontainers/testcontainers-go v0.44.0
 )
