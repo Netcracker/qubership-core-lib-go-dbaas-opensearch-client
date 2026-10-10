@@ -1,11 +1,11 @@
 module github.com/netcracker/qubership-core-lib-go-dbaas-opensearch-client/v5
 
-go 1.26.5
+go 1.26.8
 
 require (
 	github.com/netcracker/qubership-core-lib-go-dbaas-base-client/v3 v3.8.0
 	github.com/netcracker/qubership-core-lib-go/v3 v3.15.0
-	github.com/opensearch-project/opensearch-go/v4 v4.6.0
+	github.com/opensearch-project/opensearch-go/v5 v5.0.1
 	github.com/stretchr/testify v1.12.1
 	github.com/testcontainers/testcontainers-go v0.44.0
 )
@@ -57,6 +57,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
+	github.com/rs/dnscache v0.0.0-20230804202142-fc85eb664529 // indirect
 	github.com/shirou/gopsutil/v4 v4.26.6 // indirect
 	github.com/sirupsen/logrus v1.9.4 // indirect
 	github.com/tklauser/go-sysconf v0.4.0 // indirect
